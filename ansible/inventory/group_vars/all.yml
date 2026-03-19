@@ -1,0 +1,24 @@
+---
+# Common variables for all hosts
+ansible_python_interpreter: /usr/bin/python3
+
+# Docker configuration
+docker_edition: ce
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+# Application configuration
+web_app_name: devops-app
+web_app_docker_image: 4hellboy4/devops-info-service
+web_app_docker_tag: latest
+web_app_port: 8000
+web_app_internal_port: 8000
+web_app_compose_project_dir: "/opt/{{ web_app_name }}"
+web_app_docker_compose_version: "3.8"
+
+# User configuration
+deploy_user: ubuntu
