@@ -1,0 +1,20 @@
+---
+- name: Complete server setup with roles
+  hosts: all
+  become: true
+
+  roles:
+    - role: common
+      tags:
+        - common
+    - role: docker
+      tags:
+        - docker
+    - role: web_app
+      tags:
+        - web_app
+
+  post_tasks:
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: "Server setup complete! All services are running."
