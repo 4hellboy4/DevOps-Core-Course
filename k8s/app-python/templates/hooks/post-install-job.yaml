@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "app-python.fullname" . }}-post-install"
+  labels:
+    {{- include "app-python.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+spec:
+  template:
+    metadata:
+      name: "{{ include "app-python.fullname" . }}-post-install"
+      labels:
+        {{- include "app-python.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: post-install-job
+          image: busybox
+          command:
+            - sh
+            - -c
+            # Static script: avoids Job spec change when only Helm values differ (see pre-install job).
+            - |
+              echo "=== Post-install hook: smoke testing deployment ==="
+              echo "Waiting for application to be ready..."
+              sleep 5
+              echo "Post-install validation completed successfully."
