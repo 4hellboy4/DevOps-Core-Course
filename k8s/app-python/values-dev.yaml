@@ -1,0 +1,42 @@
+# Multiple replicas: PVC must be off (chart default uses RWO).
+replicaCount: 2
+
+persistence:
+  enabled: false
+
+image:
+  tag: "latest"
+  pullPolicy: Never
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8000
+  # NodePorts are cluster-wide; 30080 was used by an older install on minikube.
+  nodePort: 30084
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+  limits:
+    memory: "128Mi"
+    cpu: "100m"
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 3
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
