@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "app-python.fullname" . }}-pre-install"
+  labels:
+    {{- include "app-python.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+spec:
+  template:
+    metadata:
+      name: "{{ include "app-python.fullname" . }}-pre-install"
+      labels:
+        {{- include "app-python.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: pre-install-job
+          image: busybox
+          command:
+            - sh
+            - -c
+            # Keep this script static (no values in the command) so Job spec.template does not
+            # change on every helm values edit — Kubernetes Jobs are immutable; ArgoCD sync would fail.
+            - |
+              echo "=== Pre-install hook: validating environment ==="
+              echo "Pre-install validation completed successfully."

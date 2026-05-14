@@ -1,0 +1,9 @@
+---
+- name: Deploy Application
+  hosts: all
+  become: true
+
+  roles:
+    - role: web_app
+      tags:
+        - web_app
